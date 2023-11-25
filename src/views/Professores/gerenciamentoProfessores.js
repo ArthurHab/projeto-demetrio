@@ -12,23 +12,35 @@ const GerenciamentoProfessores = props => {
     handleClick();
   }, []);
 
+  function getEnderecos() {
+    return new Promise (resolse => {
+      axios
+      .get("http://demo2095023.mockable.io/endereco")
+      .then(response => {
+        resolse(response.data.lista)
+      })
+      .catch(error => console.log(error));
+    })
+  }
+
   function handleClick() {
-    axios
+    getEnderecos().then((enderecos) => {
+      axios
       .get("http://demo1481267.mockable.io/professores")
       .then(response => {
-        const professores = response.data.lista.map(c => {
+        let professores = response.data.lista.map(c => {
           return {
             id: c.id,
             matricula: c.matricula,
             nome: c.nome,
-            idEndereco: c.idEnderedo,
+            idEndereco: enderecos.filter(enderecos => enderecos.id == c.idEnderedo)[0].nomeRua,
             curso: c.curso
           };
         });
         setData(professores);
-        console.log(response);
       })
       .catch(error => console.log(error));
+    })
   }
 
   function handleCreate(newData) {
