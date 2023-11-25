@@ -12,23 +12,36 @@ const GerenciamentoAlunos = props => {
     handleClick();
   }, []);
 
+  function getEnderecos() {
+    return new Promise (resolse => {
+      axios
+      .get("http://demo2095023.mockable.io/endereco")
+      .then(response => {
+        resolse(response.data.lista)
+      })
+      .catch(error => console.log(error));
+    })
+  }
+
   function handleClick() {
-    axios
+    getEnderecos().then((enderecos) => {
+      axios
       .get("http://demo1481267.mockable.io/alunos")
       .then(response => {
-        const alunos = response.data.lista.map(c => {
+        let alunos = response.data.lista.map(c => {
           return {
             id: c.id,
             cpf: c.cpf,
             matricula: c.matricula,
             nome: c.nome,
-            idEndereco: c.idEndereco,
+            idEndereco: enderecos.filter(enderecos => enderecos.id == c.idEndereco)[0].nomeRua,
             curso: c.curso
           };
         });
         setData(alunos);
       })
       .catch(error => console.log(error));
+    });
   }
 
   function handleCreate(newData) {
@@ -79,7 +92,7 @@ const GerenciamentoAlunos = props => {
         columns={[
           { title: 'Id', field: 'id' },
           { title: 'cpf', field: 'cpf' },
-          { title: 'matricula', field: 'matricula', type: 'numerico' },
+          { title: 'matricula', field: 'matricula' },
           { title: 'nome', field: 'nome' },
           { title: 'endereco', field: 'idEndereco' },
           { title: 'curso', field: 'curso' }
