@@ -11,23 +11,49 @@ const GerenciamentoProjetos = props => {
   useEffect(() => {
     handleClick();
   }, []);
+  
+  function getProfessores(){
+    return new Promise(resolve => {
+      axios
+      .get("http://demo1481267.mockable.io/professores")
+      .then((response) => {
+        resolve(response.data.lista)
+      })
+    })
+  }
+
+  function getAlunos(){
+    return new Promise(resolve => {
+      axios
+      .get("http://demo1481267.mockable.io/alunos")
+      .then((response) => {
+        resolve(response.data.lista)
+      })
+    })
+  }
 
   function handleClick() {
-    axios
-      .get("http://demo2095023.mockable.io/projetos")
-      .then(response => {
-        const projetos = response.data.lista.map(c => {
-          return {
-            id: c.id,
-            tituloProjeto: c.tituloProjeto,
-            areaProjeto: c.areaProjeto,
-            resumo: c.resumo,
-            url: c.url
-          };
-        });
-        setData(projetos);
+    getAlunos().then((alunos) => {
+      getProfessores().then((professores) => {
+        axios
+        .get("http://demo2095023.mockable.io/projetos")
+        .then(response => {
+          const projetos = response.data.lista.map(c => {
+            return {
+              id: c.id,
+              tituloProjeto: c.tituloProjeto,
+              areaProjeto: c.areaProjeto,
+              resumo: c.resumo,
+              url: c.url,
+              idProfessorResponsavel: professores.filter(professores => professores.id == c.idProfessorResponsavel)[0].nome,
+              idAlunoParticipante: alunos.filter(alunos => alunos.id == c.idAlunoParticipante)[0].nome
+            };
+          });
+          setData(projetos);
+        })
+        .catch(error => console.log(error));
       })
-      .catch(error => console.log(error));
+    })
   }
 
   function handleCreate(newData) {
@@ -79,6 +105,8 @@ const GerenciamentoProjetos = props => {
           { title: 'Area Projeto', field: 'areaProjeto'},
           { title: 'Resumo', field: 'resumo' },
           { title: 'URL', field: 'url' },
+          { title: 'Professor responsável', field: 'idProfessorResponsavel'},
+          { title: 'Aluno participante', field: 'idAlunoParticipante'}
         ]}
         data={data}
         editable={{
