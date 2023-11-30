@@ -45,8 +45,10 @@ const GerenciamentoProjetos = props => {
               areaProjeto: c.areaProjeto,
               resumo: c.resumo,
               url: c.url,
-              idProfessorResponsavel: professores.filter(professores => professores.id == c.idProfessorResponsavel)[0].nome,
-              idAlunoParticipante: alunos.filter(alunos => alunos.id == c.idAlunoParticipante)[0].nome
+              idProfessorResponsavel: c.idProfessorResponsavel,
+              idAlunoParticipante: c.idAlunoParticipante,
+              objProfessorResponsavel: professores.filter(professores => professores.id == c.idProfessorResponsavel)[0].nome,
+              objAlunoParticipante: alunos.filter(alunos => alunos.id == c.idAlunoParticipante)[0].nome
             };
           });
           setData(projetos);
@@ -104,9 +106,11 @@ const GerenciamentoProjetos = props => {
           { title: 'Titulo Projeto', field: 'tituloProjeto' },
           { title: 'Area Projeto', field: 'areaProjeto'},
           { title: 'Resumo', field: 'resumo' },
+          { title: 'ID Professor responsável ', field: 'idProfessorResponsavel'},
+          { title: 'Professor responsável', field: 'objProfessorResponsavel'},
+          { title: 'ID Aluno participante', field: 'idAlunoParticipante'},
+          { title: 'Aluno participante', field: 'objAlunoParticipante'},
           { title: 'URL', field: 'url' },
-          { title: 'Professor responsável', field: 'idProfessorResponsavel'},
-          { title: 'Aluno participante', field: 'idAlunoParticipante'}
         ]}
         data={data}
         editable={{
