@@ -22,8 +22,7 @@ const GerenciamentoProfessores = props => {
             matricula: c.matricula,
             nome: c.nome,
             curso: c.curso,
-            idEndereco: c.endereco.id,
-            rua: c.endereco.rua
+            idEndereco: `${c.endereco.id} - ${c.endereco.rua}`
           };
         });
         setData(professores);
@@ -75,8 +74,7 @@ const GerenciamentoProfessores = props => {
           { title: 'Id', field: 'id' },
           { title: 'matricula', field: 'matricula' },
           { title: 'nome', field: 'nome' },
-          { title: 'endereco', field: 'idEndereco' },
-          { title: 'Rua', field: 'rua' },
+          { title: 'ID-Rua', field: 'idEndereco' },
           { title: 'curso', field: 'curso' }
         ]}
         data={data}
