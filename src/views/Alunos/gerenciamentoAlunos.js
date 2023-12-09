@@ -23,7 +23,8 @@ const GerenciamentoAlunos = props => {
             matricula: c.matricula,
             nome: c.nome,
             curso: c.curso,
-            idEndereco: c.endereco.id
+            idEndereco: c.endereco.id,
+            rua: c.endereco.rua
           };
         });
         setData(alunos);
@@ -79,7 +80,8 @@ const GerenciamentoAlunos = props => {
           { title: 'cpf', field: 'cpf' },
           { title: 'matricula', field: 'matricula' },
           { title: 'nome', field: 'nome' },
-          { title: 'endereco', field: 'idEndereco' },
+          { title: 'idEndereco', field: 'idEndereco' },
+          { title: 'Rua', field: 'rua' },
           { title: 'curso', field: 'curso' }
         ]}
         data={data}
