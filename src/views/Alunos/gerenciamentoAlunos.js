@@ -12,46 +12,33 @@ const GerenciamentoAlunos = props => {
     handleClick();
   }, []);
 
-  function getEnderecos() {
-    return new Promise (resolse => {
-      axios
-      .get("http://demo2095023.mockable.io/endereco")
-      .then(response => {
-        resolse(response.data.lista)
-      })
-      .catch(error => console.log(error));
-    })
-  }
-
   function handleClick() {
-    getEnderecos().then((enderecos) => {
       axios
-      .get("http://demo1481267.mockable.io/alunos")
+      .get("http://localhost:8080/aluno")
       .then(response => {
-        let alunos = response.data.lista.map(c => {
+        let alunos = response.data.map(c => {
           return {
             id: c.id,
             cpf: c.cpf,
             matricula: c.matricula,
             nome: c.nome,
-            idEndereco: enderecos.filter(enderecos => enderecos.id == c.idEndereco)[0].nomeRua,
-            curso: c.curso
+            curso: c.curso,
+            idEndereco: c.endereco.id
           };
         });
         setData(alunos);
       })
       .catch(error => console.log(error));
-    });
+    ;
   }
 
   function handleCreate(newData) {
     axios
-      .post("http://demo1481267.mockable.io/alunos", {
-        "id": newData.id,
+      .post("http://localhost:8080/aluno", {
         "cpf": newData.cpf,
         "matricula": newData.matricula,
         "nome": newData.nome,
-        "idEndereco": newData.idEndereco,
+        "endereco": newData.idEndereco,
         "curso": newData.curso
       })
       .then(function (response) {
@@ -61,12 +48,12 @@ const GerenciamentoAlunos = props => {
 
   function handleUpdate(newData) {
     axios
-      .put("http://demo1481267.mockable.io/alunos", {
+      .put("http://localhost:8080/aluno", {
         "id": newData.id,
         "cpf": newData.cpf,
         "matricula": newData.matricula,
         "nome": newData.nome,
-        "idEndereco": newData.idEndereco,
+        "endereco": newData.idEndereco,
         "curso": newData.curso
       })
       .then(function (response) {
@@ -76,9 +63,7 @@ const GerenciamentoAlunos = props => {
 
   function handleDelete(newData) {
     axios
-      .delete("http://demo1481267.mockable.io/alunos", {
-        "id": newData.id
-      })
+      .delete(`http://localhost:8080/aluno/${newData.id}`)
       .then(function (response) {
         console.log('Deletado com sucesso.')
       });
@@ -114,26 +99,25 @@ const GerenciamentoAlunos = props => {
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
+                handleUpdate(newData);
                 const dataUpdate = [...data];
                 const index = oldData.tableData.id;
                 dataUpdate[index] = newData;
                 setData([...dataUpdate]);
-
                 resolve();
               }, 1000)
             }),
           onRowDelete: oldData =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                handleDelete(oldData)
-                const dataDelete = [...data];
-                const index = oldData.tableData.id;
-                dataDelete.splice(index, 1);
-                setData([...dataDelete]);
-
-                resolve()
-              }, 1000)
-            }),
+          new Promise((resolve, reject) => {
+            setTimeout(() => {
+              handleDelete(oldData);
+              const dataDelete = [...data];
+              const index = oldData.tableData.id;
+              dataDelete.splice(index, 1);
+              setData([...dataDelete]);
+              resolve()
+            }, 1000)
+          }),
         }}
       />]
   )

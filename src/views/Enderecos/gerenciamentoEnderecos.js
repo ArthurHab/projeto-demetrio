@@ -14,12 +14,17 @@ const GerenciamentoEnderecos = props => {
 
   function handleClick() {
     axios
-      .get("http://demo2095023.mockable.io/endereco")
+      .get("http://localhost:8080/endereco")
       .then(response => {
-        const projetos = response.data.lista.map(c => {
+        const projetos = response.data.map(c => {
           return {
             id: c.id,
-            nomeRua: c.nomeRua
+            rua: c.rua,
+            numero: c.numero,
+            cep: c.cep,
+            cidade: c.cidade,
+            estado: c.estado,
+            pais: c.pais
           };
         });
         setData(projetos);
@@ -29,12 +34,13 @@ const GerenciamentoEnderecos = props => {
 
   function handleCreate(newData) {
     axios
-      .post("http://demo2095023.mockable.io/endereco", {
-        "id": newData.id,
-        "tituloProjeto": newData.tituloProjeto,
-        "areaProjeto": newData.areaProjeto,
-        "resumo": newData.resumo,
-        "url": newData.url
+      .post("http://localhost:8080/endereco", {
+        "rua": newData.rua,
+        "numero": newData.numero,
+        "cep": newData.cep,
+        "cidade": newData.cidade,
+        "estado": newData.estado,
+        "pais": newData.pais
       })
       .then(function (response) {
         console.log('Salvo com sucesso.')
@@ -43,12 +49,14 @@ const GerenciamentoEnderecos = props => {
 
   function handleUpdate(newData) {
     axios
-      .put("http://demo2095023.mockable.io/endereco", {
+      .put("http://localhost:8080/endereco", {
         "id": newData.id,
-        "tituloProjeto": newData.tituloProjeto,
-        "areaProjeto": newData.areaProjeto,
-        "resumo": newData.resumo,
-        "url": newData.url
+        "rua": newData.rua,
+        "numero": newData.numero,
+        "cep": newData.cep,
+        "cidade": newData.cidade,
+        "estado": newData.estado,
+        "pais": newData.pais
       })
       .then(function (response) {
         console.log('Atualizado com sucesso.')
@@ -57,12 +65,16 @@ const GerenciamentoEnderecos = props => {
 
   function handleDelete(newData) {
     axios
-      .delete("http://demo2095023.mockable.io/endereco", {
-        "id": newData.id
-      })
+      .delete(`http://localhost:8080/endereco/${newData.id}`)
       .then(function (response) {
         console.log('Deletado com sucesso.')
-      });
+        const dataDelete = [...data];
+        const index = newData.tableData.id;
+        dataDelete.splice(index, 1);
+        setData([...dataDelete]);
+      }).catch((error) => {
+        alert('É necessário excluir todos os professores e alunos que usam esse endereço!');
+      })
   }
 
   return (
@@ -72,43 +84,38 @@ const GerenciamentoEnderecos = props => {
         title="Gerenciamento de Endereços"
         columns={[
           { title: 'Id', field: 'id' },
-          { title: 'Rua', field: 'nomeRua' }
+          { title: 'Rua', field: 'rua' },
+          { title: 'Numero', field: 'numero' },
+          { title: 'CEP', field: 'cep' },
+          { title: 'Cidade', field: 'cidade' },
+          { title: 'Estado', field: 'estado' },
+          { title: 'Pais', field: 'pais' }
         ]}
         data={data}
         editable={{
           onRowAdd: newData =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                handleCreate(newData)
-
-                const dataCreate = [...data];
-
-                setData([...dataCreate, newData]);
-
+                handleCreate(newData);
                 resolve();
               }, 1000)
             }),
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
+                handleUpdate(newData);
                 const dataUpdate = [...data];
                 const index = oldData.tableData.id;
                 dataUpdate[index] = newData;
                 setData([...dataUpdate]);
-
                 resolve();
               }, 1000)
             }),
           onRowDelete: oldData =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                handleDelete(oldData)
-                const dataDelete = [...data];
-                const index = oldData.tableData.id;
-                dataDelete.splice(index, 1);
-                setData([...dataDelete]);
-
-                resolve()
+                  handleDelete(oldData);
+                resolve();
               }, 1000)
             }),
         }}

@@ -12,59 +12,56 @@ const GerenciamentoProjetos = props => {
     handleClick();
   }, []);
   
-  function getProfessores(){
-    return new Promise(resolve => {
-      axios
-      .get("http://demo1481267.mockable.io/professores")
+  async function getProfessores(){
+    const professores = axios
+      .get("http://localhost:8080/professor")
       .then((response) => {
-        resolve(response.data.lista)
+        return(response.data);
       })
-    })
+      return professores;
   }
 
-  function getAlunos(){
-    return new Promise(resolve => {
-      axios
-      .get("http://demo1481267.mockable.io/alunos")
+  async function getAlunos(){
+    const alunos = axios
+      .get("http://localhost:8080/aluno")
       .then((response) => {
-        resolve(response.data.lista)
-      })
+        return(response.data);
     })
+    return alunos;
   }
 
-  function handleClick() {
-    getAlunos().then((alunos) => {
-      getProfessores().then((professores) => {
-        axios
-        .get("http://demo2095023.mockable.io/projetos")
-        .then(response => {
-          const projetos = response.data.lista.map(c => {
-            return {
-              id: c.id,
-              tituloProjeto: c.tituloProjeto,
-              areaProjeto: c.areaProjeto,
-              resumo: c.resumo,
-              url: c.url,
-              idProfessorResponsavel: c.idProfessorResponsavel,
-              idAlunoParticipante: c.idAlunoParticipante,
-              objProfessorResponsavel: professores.filter(professores => professores.id == c.idProfessorResponsavel)[0].nome,
-              objAlunoParticipante: alunos.filter(alunos => alunos.id == c.idAlunoParticipante)[0].nome
-            };
-          });
-          setData(projetos);
-        })
-        .catch(error => console.log(error));
-      })
+  async function handleClick() {
+    let alunos = await getAlunos();
+    let professores = await getProfessores();
+    axios
+    .get("http://localhost:8080/projeto")
+    .then(response => {
+      const projetos = response.data.map(c => {
+        return {
+          id: c.id,
+          tituloProjeto: c.tituloProjeto,
+          areaProjeto: c.areaProjeto,
+          resumo: c.resumo,
+          url: c.url,
+          idProfessor: c.idProfessor,
+          idAluno: c.idAluno,
+          objProfessorResponsavel: c.idProfessor, // ERRO AQUI professores.filter(professores => professores.id == c.idProfessor)[0].nome,
+          objAlunoParticipante: c.idAluno // ERRO AQUI alunos.filter(alunos => alunos.id == c.idAluno)[0].nome 
+        };
+      });
+      setData(projetos);
     })
+    .catch(error => console.log(error));
   }
 
   function handleCreate(newData) {
     axios
-      .post("http://demo2095023.mockable.io/projetos", {
-        "id": newData.id,
+      .post("http://localhost:8080/projeto", {
         "tituloProjeto": newData.tituloProjeto,
         "areaProjeto": newData.areaProjeto,
         "resumo": newData.resumo,
+        "idProfessor": newData.idProfessor,
+        "idAluno": newData.idAluno,
         "url": newData.url
       })
       .then(function (response) {
@@ -74,11 +71,13 @@ const GerenciamentoProjetos = props => {
 
   function handleUpdate(newData) {
     axios
-      .put("http://demo2095023.mockable.io/projetos", {
+      .put("http://localhost:8080/projeto", {
         "id": newData.id,
         "tituloProjeto": newData.tituloProjeto,
         "areaProjeto": newData.areaProjeto,
         "resumo": newData.resumo,
+        "idProfessor": newData.idProfessor,
+        "idAluno": newData.idAluno,
         "url": newData.url
       })
       .then(function (response) {
@@ -88,9 +87,7 @@ const GerenciamentoProjetos = props => {
 
   function handleDelete(newData) {
     axios
-      .delete("http://demo2095023.mockable.io/projetos", {
-        "id": newData.id
-      })
+      .delete(`http://localhost:8080/projeto/${newData.id}`)
       .then(function (response) {
         console.log('Deletado com sucesso.')
       });
@@ -98,7 +95,6 @@ const GerenciamentoProjetos = props => {
 
   return (
     [
-
       <MaterialTable
         title="Gerenciamento de Projetos"
         columns={[
@@ -106,9 +102,9 @@ const GerenciamentoProjetos = props => {
           { title: 'Titulo Projeto', field: 'tituloProjeto' },
           { title: 'Area Projeto', field: 'areaProjeto'},
           { title: 'Resumo', field: 'resumo' },
-          { title: 'ID Professor responsável ', field: 'idProfessorResponsavel'},
+          { title: 'ID Professor responsável ', field: 'idProfessor'},
           { title: 'Professor responsável', field: 'objProfessorResponsavel'},
-          { title: 'ID Aluno participante', field: 'idAlunoParticipante'},
+          { title: 'ID Aluno participante', field: 'idAluno'},
           { title: 'Aluno participante', field: 'objAlunoParticipante'},
           { title: 'URL', field: 'url' },
         ]}
@@ -129,6 +125,7 @@ const GerenciamentoProjetos = props => {
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
+                handleUpdate(newData);
                 const dataUpdate = [...data];
                 const index = oldData.tableData.id;
                 dataUpdate[index] = newData;
