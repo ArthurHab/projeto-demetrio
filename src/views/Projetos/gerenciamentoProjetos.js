@@ -33,8 +33,6 @@ const GerenciamentoProjetos = props => {
   async function handleClick() {
     let alunos = await getAlunos();
     let professores = await getProfessores();
-    console.log((professores.filter((professor) => professor.id === 3)[0]).nome);
-    console.log((alunos.filter((aluno) => aluno.id === 3)[0]).nome);
 
     axios
     .get("http://localhost:8080/projeto")
