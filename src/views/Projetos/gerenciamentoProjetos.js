@@ -55,10 +55,10 @@ const GerenciamentoProjetos = props => {
         let professorFiltrado = professores.filter((professor) => professor.id === c.idProfessor);
 
         if(alunoFiltrado.length > 0){
-          aluno = alunoFiltrado[0].nome
+          aluno = alunoFiltrado[0].id
         }
         if(professorFiltrado.length > 0){
-          professor = professorFiltrado[0].nome
+          professor = professorFiltrado[0].id
         }
         
         return {
@@ -67,8 +67,8 @@ const GerenciamentoProjetos = props => {
           areaProjeto: c.areaProjeto,
           resumo: c.resumo,
           url: c.url,
-          idProfessor: c.idProfessor,
-          idAluno: c.idAluno,
+          idProfessor: professor,
+          idAluno: aluno,
         };
       });
       setData(projetos);
