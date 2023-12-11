@@ -97,6 +97,8 @@ const GerenciamentoEnderecos = props => {
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 handleCreate(newData);
+                const dataCreate = [...data];
+                setData([...dataCreate, newData]);
                 resolve();
               }, 1000)
             }),

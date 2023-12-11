@@ -5,15 +5,40 @@ import MaterialTable from "material-table";
 const GerenciamentoAlunos = props => {
   const { useState, useEffect } = React;
 
-  const [data, setData] = useState([
-  ]);
+  const [data, setData] = useState([]);
+  const [enderecosMapeados, setEnderecosMapeados] = useState({});
 
   useEffect(() => {
     handleClick();
   }, []);
 
-  function handleClick() {
-      axios
+  async function getEnderecos() {
+    axios
+      .get("http://localhost:8080/endereco")
+      .then(response => {
+        const enderecos = response.data.map(c => {
+          return {
+            id: c.id,
+            rua: c.rua,
+            numero: c.numero,
+            cep: c.cep,
+            cidade: c.cidade,
+            estado: c.estado,
+            pais: c.pais
+          };
+        });
+      var novoObjeto = {};
+      enderecos.forEach(function(objeto) {
+      novoObjeto[objeto.id] = `${objeto.id} - ${objeto.rua}`; 
+      });
+      setEnderecosMapeados(novoObjeto);
+      })
+      .catch(error => console.log(error));
+  }
+
+  async function handleClick() {
+    await getEnderecos();
+    axios
       .get("http://localhost:8080/aluno")
       .then(response => {
         let alunos = response.data.map(c => {
@@ -23,13 +48,13 @@ const GerenciamentoAlunos = props => {
             matricula: c.matricula,
             nome: c.nome,
             curso: c.curso,
-            idEndereco: `${c.endereco.id} - ${c.endereco.rua}`
+            idEndereco: c.endereco.id,
+            rua: c.endereco.rua
           };
         });
-        setData(alunos);
+        setData(alunos); 
       })
       .catch(error => console.log(error));
-    ;
   }
 
   function handleCreate(newData) {
@@ -39,7 +64,7 @@ const GerenciamentoAlunos = props => {
         "matricula": newData.matricula,
         "nome": newData.nome,
         "endereco": newData.idEndereco,
-        "curso": newData.curso
+        "curso": newData.curso 
       })
       .then(function (response) {
         console.log('Salvo com sucesso.')
@@ -79,7 +104,11 @@ const GerenciamentoAlunos = props => {
           { title: 'cpf', field: 'cpf' },
           { title: 'matricula', field: 'matricula' },
           { title: 'nome', field: 'nome' },
-          { title: 'ID-Rua', field: 'idEndereco' },
+          {
+            title: 'ID-Rua',
+            field: 'idEndereco',
+            lookup: enderecosMapeados,
+          },
           { title: 'curso', field: 'curso' }
         ]}
         data={data}

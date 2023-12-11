@@ -36,7 +36,7 @@ const GerenciamentoProjetos = props => {
     axios
     .get("http://localhost:8080/projeto")
     .then(response => {
-      const projetos = response.data.map(c => {
+      let projetos = response.data.map(c => {
         return {
           id: c.id,
           tituloProjeto: c.tituloProjeto,
@@ -45,8 +45,8 @@ const GerenciamentoProjetos = props => {
           url: c.url,
           idProfessor: c.idProfessor,
           idAluno: c.idAluno,
-          objProfessorResponsavel: c.idProfessor, // ERRO AQUI professores.filter(professores => professores.id == c.idProfessor)[0].nome,
-          objAlunoParticipante: c.idAluno // ERRO AQUI alunos.filter(alunos => alunos.id == c.idAluno)[0].nome 
+          objProfessorResponsavel: professores.filter((professor) => professor.id === c.idProfessor)[0].nome,
+          objAlunoParticipante: alunos.filter((aluno) => aluno.id === c.idAluno)[0].nome 
         };
       });
       setData(projetos);

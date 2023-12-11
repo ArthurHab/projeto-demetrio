@@ -5,14 +5,39 @@ import MaterialTable from "material-table";
 const GerenciamentoProfessores = props => {
   const { useState, useEffect } = React;
 
-  const [data, setData] = useState([
-  ]);
+  const [data, setData] = useState([]);
+  const [enderecosMapeados, setEnderecosMapeados] = useState({});
 
   useEffect(() => {
     handleClick();
   }, []);
 
-  function handleClick() {
+  async function getEnderecos() {
+    axios
+      .get("http://localhost:8080/endereco")
+      .then(response => {
+        const enderecos = response.data.map(c => {
+          return {
+            id: c.id,
+            rua: c.rua,
+            numero: c.numero,
+            cep: c.cep,
+            cidade: c.cidade,
+            estado: c.estado,
+            pais: c.pais
+          };
+        });
+      var novoObjeto = {};
+      enderecos.forEach(function(objeto) {
+      novoObjeto[objeto.id] = `${objeto.id} - ${objeto.rua}`; 
+      });
+      setEnderecosMapeados(novoObjeto);
+      })
+      .catch(error => console.log(error));
+  }
+
+  async function handleClick() {
+    await getEnderecos();
       axios
       .get("http://localhost:8080/professor")
       .then(response => {
@@ -22,7 +47,7 @@ const GerenciamentoProfessores = props => {
             matricula: c.matricula,
             nome: c.nome,
             curso: c.curso,
-            idEndereco: `${c.endereco.id} - ${c.endereco.rua}`
+            idEndereco: c.endereco.id
           };
         });
         setData(professores);
@@ -74,7 +99,11 @@ const GerenciamentoProfessores = props => {
           { title: 'Id', field: 'id' },
           { title: 'matricula', field: 'matricula' },
           { title: 'nome', field: 'nome' },
-          { title: 'ID-Rua', field: 'idEndereco' },
+          {
+            title: 'ID-Rua',
+            field: 'idEndereco',
+            lookup: enderecosMapeados,
+          },
           { title: 'curso', field: 'curso' }
         ]}
         data={data}
