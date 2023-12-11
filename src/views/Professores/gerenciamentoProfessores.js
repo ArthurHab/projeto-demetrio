@@ -29,7 +29,7 @@ const GerenciamentoProfessores = props => {
         });
       var novoObjeto = {};
       enderecos.forEach(function(objeto) {
-      novoObjeto[objeto.id] = `${objeto.id} - ${objeto.rua}`; 
+        novoObjeto[objeto.id] = `${objeto.id} - ${objeto.rua}`; 
       });
       setEnderecosMapeados(novoObjeto);
       })
@@ -96,7 +96,7 @@ const GerenciamentoProfessores = props => {
       <MaterialTable
         title="Gerenciamento de Professores"
         columns={[
-          { title: 'Id', field: 'id' },
+          { title: 'Id', field: 'id', editable: 'never'},
           { title: 'matricula', field: 'matricula' },
           { title: 'nome', field: 'nome' },
           {

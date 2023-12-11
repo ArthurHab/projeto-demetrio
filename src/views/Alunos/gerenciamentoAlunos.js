@@ -100,7 +100,7 @@ const GerenciamentoAlunos = props => {
       <MaterialTable
         title="Gerenciamento de Alunos"
         columns={[
-          { title: 'Id', field: 'id' },
+          { title: 'Id', field: 'id', editable: 'never'},
           { title: 'cpf', field: 'cpf' },
           { title: 'matricula', field: 'matricula' },
           { title: 'nome', field: 'nome' },

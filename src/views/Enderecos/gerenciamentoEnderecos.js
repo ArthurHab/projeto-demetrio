@@ -83,7 +83,7 @@ const GerenciamentoEnderecos = props => {
       <MaterialTable
         title="Gerenciamento de Endereços"
         columns={[
-          { title: 'Id', field: 'id' },
+          { title: 'Id', field: 'id', editable: 'never'},
           { title: 'Rua', field: 'rua' },
           { title: 'Numero', field: 'numero' },
           { title: 'CEP', field: 'cep' },

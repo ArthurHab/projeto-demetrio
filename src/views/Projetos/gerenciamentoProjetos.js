@@ -5,8 +5,9 @@ import MaterialTable from "material-table";
 const GerenciamentoProjetos = props => {
   const { useState, useEffect } = React;
 
-  const [data, setData] = useState([
-  ]);
+  const [data, setData] = useState([]);
+  const [alunosMapeados, setAlunosMapeados] = useState({});
+  const [professoresMapeados, setProfessoresMapeados] = useState({});
 
   useEffect(() => {
     handleClick();
@@ -16,6 +17,11 @@ const GerenciamentoProjetos = props => {
     const professores = axios
       .get("http://localhost:8080/professor")
       .then((response) => {
+        var novoObjeto = {};
+        response.data.forEach(function(objeto) {
+          novoObjeto[objeto.id] = `${objeto.id} - ${objeto.nome}`; 
+        });
+        setProfessoresMapeados(novoObjeto);
         return(response.data);
       })
       return professores;
@@ -25,6 +31,11 @@ const GerenciamentoProjetos = props => {
     const alunos = axios
       .get("http://localhost:8080/aluno")
       .then((response) => {
+        var novoObjeto = {};
+        response.data.forEach(function(objeto) {
+          novoObjeto[objeto.id] = `${objeto.id} - ${objeto.nome}`; 
+        });
+        setAlunosMapeados(novoObjeto);
         return(response.data);
     })
     return alunos;
@@ -33,7 +44,6 @@ const GerenciamentoProjetos = props => {
   async function handleClick() {
     let alunos = await getAlunos();
     let professores = await getProfessores();
-
     axios
     .get("http://localhost:8080/projeto")
     .then(response => {
@@ -59,8 +69,6 @@ const GerenciamentoProjetos = props => {
           url: c.url,
           idProfessor: c.idProfessor,
           idAluno: c.idAluno,
-          objProfessorResponsavel: professor,
-          objAlunoParticipante: aluno 
         };
       });
       setData(projetos);
@@ -112,14 +120,12 @@ const GerenciamentoProjetos = props => {
       <MaterialTable
         title="Gerenciamento de Projetos"
         columns={[
-          { title: 'Id', field: 'id' },
+          { title: 'Id', field: 'id', editable: 'never'},
           { title: 'Titulo Projeto', field: 'tituloProjeto' },
           { title: 'Area Projeto', field: 'areaProjeto'},
           { title: 'Resumo', field: 'resumo' },
-          { title: 'ID Professor responsável ', field: 'idProfessor'},
-          { title: 'Professor responsável', field: 'objProfessorResponsavel'},
-          { title: 'ID Aluno participante', field: 'idAluno'},
-          { title: 'Aluno participante', field: 'objAlunoParticipante'},
+          { title: 'ID - Professor responsável ', field: 'idProfessor', lookup: professoresMapeados},
+          { title: 'ID - Aluno participante', field: 'idAluno', lookup: alunosMapeados},
           { title: 'URL', field: 'url' },
         ]}
         data={data}
