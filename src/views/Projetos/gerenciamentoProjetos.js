@@ -33,10 +33,26 @@ const GerenciamentoProjetos = props => {
   async function handleClick() {
     let alunos = await getAlunos();
     let professores = await getProfessores();
+    console.log((professores.filter((professor) => professor.id === 3)[0]).nome);
+    console.log((alunos.filter((aluno) => aluno.id === 3)[0]).nome);
+
     axios
     .get("http://localhost:8080/projeto")
     .then(response => {
       let projetos = response.data.map(c => {
+
+        let aluno = 'não cadastrado';
+        let professor = 'não cadastrado';
+        let alunoFiltrado = alunos.filter((aluno) => aluno.id === c.idAluno);
+        let professorFiltrado = professores.filter((professor) => professor.id === c.idProfessor);
+
+        if(alunoFiltrado.length > 0){
+          aluno = alunoFiltrado[0].nome
+        }
+        if(professorFiltrado.length > 0){
+          professor = professorFiltrado[0].nome
+        }
+        
         return {
           id: c.id,
           tituloProjeto: c.tituloProjeto,
@@ -45,8 +61,8 @@ const GerenciamentoProjetos = props => {
           url: c.url,
           idProfessor: c.idProfessor,
           idAluno: c.idAluno,
-          objProfessorResponsavel: professores.filter((professor) => professor.id === c.idProfessor)[0].nome,
-          objAlunoParticipante: alunos.filter((aluno) => aluno.id === c.idAluno)[0].nome 
+          objProfessorResponsavel: professor,
+          objAlunoParticipante: aluno 
         };
       });
       setData(projetos);
